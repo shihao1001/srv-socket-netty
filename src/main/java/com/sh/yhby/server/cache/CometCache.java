@@ -38,6 +38,8 @@ public class CometCache {
 	public static void removeConnect(Long userId){
 		connectedUserChannel.remove(userId);
 	}
+		
+	public static 
 	
 	
 	
