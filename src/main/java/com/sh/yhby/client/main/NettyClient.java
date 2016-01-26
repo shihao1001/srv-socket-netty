@@ -1,6 +1,10 @@
 package com.sh.yhby.client.main;
 
+import com.sh.yhby.client.cache.ClientCache;
+import com.sh.yhby.protobuf.ActionProbuf;
+
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -17,6 +21,7 @@ import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 
 
 
@@ -24,7 +29,36 @@ public class NettyClient {
 	
 	private String ipAddr;
 	private Integer port;
+	private SocketChannel socketChannel;
 	
+	public String getIpAddr() {
+		return ipAddr;
+	}
+
+	public void setIpAddr(String ipAddr) {
+		this.ipAddr = ipAddr;
+	}
+
+	public Integer getPort() {
+		return port;
+	}
+
+	public void setPort(Integer port) {
+		this.port = port;
+	}
+
+	public SocketChannel getSocketChannel() {
+		return socketChannel;
+	}
+
+	public void setSocketChannel(SocketChannel socketChannel) {
+		this.socketChannel = socketChannel;
+	}
+	
+	public NettyClient(String ipAddr, Integer port) {
+		this.ipAddr = ipAddr;
+		this.port = port;
+	}
 	
 	
 	
@@ -38,20 +72,25 @@ public class NettyClient {
 	                .option(ChannelOption.TCP_NODELAY, true)
 	                .handler(new ChannelInitializer<SocketChannel>() {  
                         @Override  
-                        public void initChannel(SocketChannel ch)  
+                        public void initChannel(SocketChannel socketChannel)  
                                 throws Exception {  
-                        	ChannelPipeline pipeline = ch.pipeline();
+                        	ChannelPipeline pipeline = socketChannel.pipeline();
+                        	pipeline.addLast(new IdleStateHandler(0, 60, 0));//60秒未写 就发送心跳数据
                         	pipeline.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
-            				//	pipeline.addLast("protobufDecoder",new ProtobufDecoder());
+            				pipeline.addLast("protobufDecoder",new ProtobufDecoder(ActionProbuf.Action.getDefaultInstance()));
                         	pipeline.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
                         	pipeline.addLast("protobufEncoder", new ProtobufEncoder());
   
                         }  
                     });  
 	        //异步链接服务器 同步等待链接成功
-	        ChannelFuture f = b.connect(ipAddr, port).sync();
+	        ChannelFuture future = b.connect(ipAddr, port).sync();
+	        if(future.isSuccess()){
+	        	socketChannel = (SocketChannel) future.channel();
+	        	ClientCache.socketChannel = socketChannel;//设置客户端socketChannel
+	        }
 	        //等待链接关闭
-	        f.channel().closeFuture().sync();
+	        future.channel().closeFuture().sync();
 	    }catch(Exception e){
 	    	System.out.println("连接出错");
 	    } finally {
@@ -59,7 +98,4 @@ public class NettyClient {
 	        System.out.println("客户端优雅的释放了线程资源...");
 	    }
 	}
-	
-	 
-
 }

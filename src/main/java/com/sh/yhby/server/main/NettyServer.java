@@ -2,6 +2,9 @@ package com.sh.yhby.server.main;
 
 
 
+import com.sh.yhby.protobuf.ActionProbuf;
+import com.sh.yhby.server.netty.handler.ServerHandler;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -36,9 +39,10 @@ public class NettyServer {
 				protected void initChannel(SocketChannel ch) throws Exception {
 					ChannelPipeline  pipeLine = ch.pipeline();
 					pipeLine.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
-				//	pipeLine.addLast("protobufDecoder",new ProtobufDecoder());
+					pipeLine.addLast("protobufDecoder",new ProtobufDecoder(ActionProbuf.Action.getDefaultInstance()));
 					pipeLine.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
 					pipeLine.addLast("protobufEncoder", new ProtobufEncoder());
+					pipeLine.addLast("protobufEncoder", new ServerHandler());
 				}
 			});
 			ChannelFuture future = bootstrap.bind(port);
