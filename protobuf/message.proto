@@ -1,0 +1,16 @@
+package protobuf;   
+
+import "msgtype.proto";
+
+option java_package = "com.sh.yhby.protobuf";   
+option java_outer_classname = "MessageProbuf";
+
+message Message{
+   optional int32 messageId = 1 [default = 0];
+   optional string uuid = 2 [default = ""];
+   optional MsgType msgType = 3;
+   optional int32 from = 4 [default = 0];
+   optional int32 to = 5 [default = 0];
+   optional string content = 6 [default = ""];
+   optional string sendTime = 7 [default = ""];
+}

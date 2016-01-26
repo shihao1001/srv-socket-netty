@@ -1,0 +1,9 @@
+package protobuf;   
+option java_package = "com.sh.yhby.protobuf";   
+option java_outer_classname = "MsgTypeProbuf";
+
+enum MsgType{
+  TEXT_MESSAGE = 1;
+  IMAGE_MESSAGE = 2;
+  LOCATION_MESSAGE = 3;
+}

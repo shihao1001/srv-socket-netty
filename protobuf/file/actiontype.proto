@@ -1,0 +1,13 @@
+package protobuf;   
+option java_package = "com.sh.yhby.protobuf";   
+option java_outer_classname = "ActionTypeProbuf";
+
+enum ActionType{
+  PING = 1;
+  LOGIN = 2;
+  RESPONSE = 3;
+  SEND_MESSAGE = 4;
+  RECEIVE_MESSAGE = 5;
+  RECEIVED_MESSAGE_ACK = 6;
+  SENDED_MESSAGE_ACK = 7;
+}

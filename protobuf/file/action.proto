@@ -1,0 +1,13 @@
+import "actiontype.proto";
+import "message.proto";
+
+package protobuf;   
+option java_package = "com.sh.yhby.protobuf";   
+option java_outer_classname = "ActionProbuf";
+
+
+message Action{
+  optional ActionType actionType = 1 [default = TEXT_MESSAGE];
+  optional string token = 2 [default = ""];	
+  repeated Message messages = 3;
+}
