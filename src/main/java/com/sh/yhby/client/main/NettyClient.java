@@ -1,6 +1,7 @@
 package com.sh.yhby.client.main;
 
 import com.sh.yhby.client.cache.ClientCache;
+import com.sh.yhby.client.netty.handler.ClientHandler;
 import com.sh.yhby.protobuf.ActionProbuf;
 
 import io.netty.bootstrap.Bootstrap;
@@ -70,32 +71,32 @@ public class NettyClient {
 	        Bootstrap b = new Bootstrap();
 	        b.group(group).channel(NioSocketChannel.class)
 	                .option(ChannelOption.TCP_NODELAY, true)
+	                .option(ChannelOption.SO_KEEPALIVE,true)
 	                .handler(new ChannelInitializer<SocketChannel>() {  
                         @Override  
                         public void initChannel(SocketChannel socketChannel)  
                                 throws Exception {  
                         	ChannelPipeline pipeline = socketChannel.pipeline();
-                        	pipeline.addLast(new IdleStateHandler(0, 60, 0));//60秒未写 就发送心跳数据
+                        	pipeline.addLast(new IdleStateHandler(0, 5, 0));//60秒未写 就发送心跳数据
                         	pipeline.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
             				pipeline.addLast("protobufDecoder",new ProtobufDecoder(ActionProbuf.Action.getDefaultInstance()));
                         	pipeline.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
                         	pipeline.addLast("protobufEncoder", new ProtobufEncoder());
-  
+                        	pipeline.addLast("clientHandler", new ClientHandler());
                         }  
                     });  
 	        //异步链接服务器 同步等待链接成功
 	        ChannelFuture future = b.connect(ipAddr, port).sync();
 	        if(future.isSuccess()){
+	        	System.out.println("客户端连接成功");
 	        	socketChannel = (SocketChannel) future.channel();
 	        	ClientCache.socketChannel = socketChannel;//设置客户端socketChannel
 	        }
 	        //等待链接关闭
-	        future.channel().closeFuture().sync();
+	        //future.channel().closeFuture().sync();
 	    }catch(Exception e){
+	    	e.printStackTrace();
 	    	System.out.println("连接出错");
-	    } finally {
-	        group.shutdownGracefully();
-	        System.out.println("客户端优雅的释放了线程资源...");
-	    }
+	    } 
 	}
 }
