@@ -75,7 +75,11 @@ public class NettyClient {
 			ChannelFuture future;
 			try {
 				future = this.getSocketChannel().writeAndFlush(loginAction).sync();
-				return future.isSuccess();
+				boolean isSuccess = future.isSuccess();
+				if(isSuccess){
+					System.out.println("登录成功");
+				}
+				return isSuccess;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

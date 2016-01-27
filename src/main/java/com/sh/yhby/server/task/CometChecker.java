@@ -11,7 +11,7 @@ import com.sh.yhby.server.domain.UserChannel;
 public class CometChecker {
 	
 	private static ScheduledExecutorService timer = Executors.newScheduledThreadPool(10);
-	private static final long timeOut = 5*60*1000;
+	private static final long timeOut = 1*60*1000;
 	
 	public static void startCheck(){
 		timer.scheduleAtFixedRate(new Runnable(){
@@ -19,6 +19,7 @@ public class CometChecker {
 				Collection<UserChannel> connects = CometCache.getAllConnect();
 				if(connects != null && connects.size() > 0){
 					for(UserChannel connect : connects ){
+						System.out.println("遍历connects");
 						long now = System.currentTimeMillis();
 						long lastHeartbeatTime = connect.getLastHeatbeatTime();
 						if(now - lastHeartbeatTime >timeOut){

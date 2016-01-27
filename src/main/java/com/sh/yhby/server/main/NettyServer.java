@@ -3,10 +3,13 @@ package com.sh.yhby.server.main;
 
 
 import java.util.Collection;
+
 import com.sh.yhby.protobuf.ActionProbuf;
 import com.sh.yhby.server.cache.CometCache;
 import com.sh.yhby.server.domain.UserChannel;
 import com.sh.yhby.server.netty.handler.ServerHandler;
+import com.sh.yhby.server.task.CometChecker;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -82,6 +85,8 @@ public class NettyServer {
 				}	
 			}
 		}).start();
+		
+		CometChecker.startCheck();
 		
 		NettyServer server = new NettyServer(9000);
 		server.run();
