@@ -1,5 +1,6 @@
 package com.sh.yhby.client.netty.handler;
 
+import com.sh.yhby.client.cache.ClientCache;
 import com.sh.yhby.client.srv.impl.ClientServiceImpl;
 import com.sh.yhby.protobuf.ActionProbuf;
 import com.sh.yhby.protobuf.ActionTypeProbuf.ActionType;
@@ -31,8 +32,8 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
 	public void channelRead(ChannelHandlerContext ctx, Object msg)
             throws Exception {
-		ActionProbuf.Action action = (ActionProbuf.Action) msg;
 		
+		ActionProbuf.Action action = (ActionProbuf.Action) msg;
 		switch(action.getActionType()){
 		    case LOGIN:{//服务器要求重新登录
 		    	System.out.println("服务器要求重新登录");
@@ -48,22 +49,16 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		    	
 		    }
 		    break;
-		}
-		
-		  
+		}	  
     }
-     
-	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        ctx.flush();
-        
-    }
+
      
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
             throws Exception {
     	System.out.println("出错了");
     	cause.printStackTrace();
-       
+    	ClientCache.client.shutdown();
     }
 
 }

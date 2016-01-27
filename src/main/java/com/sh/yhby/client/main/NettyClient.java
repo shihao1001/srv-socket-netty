@@ -3,9 +3,7 @@ package com.sh.yhby.client.main;
 import com.sh.yhby.client.cache.ClientCache;
 import com.sh.yhby.client.netty.handler.ClientHandler;
 import com.sh.yhby.protobuf.ActionProbuf;
-
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -14,23 +12,18 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpRequestEncoder;
-import io.netty.handler.codec.http.HttpResponseDecoder;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
-import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
-
-
 public class NettyClient {
-	
-	private String ipAddr;
-	private Integer port;
+	private String ipAddr = "127.0.0.1";
+	private Integer port = 9000; 
 	private SocketChannel socketChannel;
+	private EventLoopGroup group;
+	public volatile boolean isShutdown = true;
 	
 	public String getIpAddr() {
 		return ipAddr;
@@ -56,16 +49,25 @@ public class NettyClient {
 		this.socketChannel = socketChannel;
 	}
 	
+	public NettyClient() {
+		connect();
+	}
+	
 	public NettyClient(String ipAddr, Integer port) {
 		this.ipAddr = ipAddr;
 		this.port = port;
+		connect();
 	}
 	
-	
+	public void shutdown(){
+		group.shutdownGracefully();
+		isShutdown = true;
+        System.out.println("客户端优雅的释放了线程资源...");
+	}
 	
 	public void connect(){
 		 //配置客户端NIO线程组
-	    EventLoopGroup group = new NioEventLoopGroup();
+	    group = new NioEventLoopGroup();
 	    try {
 	        //客户端辅助启动类 对客户端配置
 	        Bootstrap b = new Bootstrap();
@@ -90,13 +92,14 @@ public class NettyClient {
 	        if(future.isSuccess()){
 	        	System.out.println("客户端连接成功");
 	        	socketChannel = (SocketChannel) future.channel();
-	        	ClientCache.socketChannel = socketChannel;//设置客户端socketChannel
+	        	//ClientCache.socketChannel = socketChannel;//设置客户端socketChannel
+	        	isShutdown = false;
+	        	ClientCache.client = this;
 	        }
-	        //等待链接关闭
-	        //future.channel().closeFuture().sync();
 	    }catch(Exception e){
 	    	e.printStackTrace();
 	    	System.out.println("连接出错");
-	    } 
+	    }
 	}
+
 }
