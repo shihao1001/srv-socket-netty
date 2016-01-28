@@ -76,6 +76,9 @@ public class Test {
 		}).start();
 		
 		
+		Thread.sleep(10*1000);
+		
+		
 		
 		//发送消息
 		Action.Builder builder = Action.newBuilder();
