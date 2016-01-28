@@ -1,5 +1,8 @@
 package com.sh.yhby.server.netty.handler;
 
+import java.io.IOError;
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +18,7 @@ import com.sh.yhby.server.domain.UserChannel;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.codec.TooLongFrameException;
 
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 
@@ -74,9 +78,16 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
 			throws Exception {
-		System.out.println("出错了");
-		cause.printStackTrace();
-		ctx.channel().close();
+		if(cause instanceof IOException || cause instanceof IOError){
+			System.out.println("出错了");	
+			logger.info("长连接出错", cause);
+			ctx.channel().close();
+		}else if (cause instanceof TooLongFrameException) {
+			logger.error("TooLongFrameException, close channel: " + ctx.channel().toString() + "\n" ,cause);
+		}else{
+			logger.error("channel unknow exception, close channel:" ,cause);
+		}
+		
 	}
 
 	

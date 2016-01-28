@@ -86,6 +86,34 @@ public class NettyServer {
 			}
 		}).start();
 		
+	/*	new Thread(new Runnable(){
+			public void run() {
+				while(true){
+					Collection<UserChannel> connects = CometCache.getAllConnect();
+					if(connects != null && connects.size() > 0){
+						for(UserChannel connect : connects ){
+							System.out.println("遍历connects");
+							long now = System.currentTimeMillis();
+							long lastHeartbeatTime = connect.getLastHeatbeatTime();
+							if(now - lastHeartbeatTime > 2*60*1000){
+								System.out.println("更新时间较远，删除channel");
+								CometCache.removeConnect(connect.getUserId());
+								if(connect.getChannel().isActive()){
+									connect.getChannel().close();
+								}
+							}
+						}
+					}	
+					try {
+						Thread.sleep(10*1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}		
+			}		
+		}).start();*/
+		
 		CometChecker.startCheck();
 		
 		NettyServer server = new NettyServer(9000);
