@@ -41,7 +41,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		String userToken = action.getToken();
 		Long userId = CacheUtil.getUserId(userToken);
 
-		if (action.getActionType().getNumber() == ActionTypeProbuf.ActionType.LOGIN.getNumber()) {// 长连接登录
+		if (action.getActionType().equals(ActionTypeProbuf.ActionType.LOGIN)) {// 长连接登录
 			// 验证用户，当前直连，没有验证
 			logger.info(String.format("用户id为：%d的用户通过长连接登录！", userId));
 			CometCache.addConnect(new UserChannel(userId, channel));
@@ -68,16 +68,23 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		    	  UserChannel userChannel = CometCache.getConnect(userId);
 			      userChannel.refreshHeatbeat();// 更新心跳时间
 		    	  //发送消息
+			      System.out.println("开始发送消息");
 			      MessageProbuf.Message message = action.getMessages(0);
 			      long from = message.getFrom();
 			      long to = message.getTo();
 			      
-			      action.newBuilderForType().setActionType(ActionType.RECEIVE_MESSAGE);
+			      ActionProbuf.Action.Builder newBuilder = action.newBuilderForType().setActionType(ActionType.RECEIVE_MESSAGE);
+			      newBuilder.addMessages(message);
+			      ActionProbuf.Action newAction =  newBuilder.build();
+			      
+			      System.out.println("修改后action类型："+newAction.getActionType());
 			    
 			      UserChannel toUserChannel = CometCache.getConnect(to);
-			      if(toUserChannel.getChannel().isActive()){
-			    	  toUserChannel.getChannel().writeAndFlush(action);
+			      if(toUserChannel.getChannel().isWritable()){
+			    	  toUserChannel.getChannel().writeAndFlush(newAction);
+			    	  System.out.println("发送消息完成");
 			      }
+			      
 			      
 		      } break;
 		}

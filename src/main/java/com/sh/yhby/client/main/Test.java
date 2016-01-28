@@ -74,16 +74,10 @@ public class Test {
 				}	
 			}	
 		}).start();
-		
-		
-		Thread.sleep(10*1000);
-		
-		
+
+		Thread.sleep(5*1000);
 		
 		//发送消息
-		Action.Builder builder = Action.newBuilder();
-		builder.setActionType(ActionType.SEND_MESSAGE);
-		
 		MessageProbuf.Message.Builder msgBuilder = MessageProbuf.Message.newBuilder();
 		msgBuilder.setMsgType(MsgType.TEXT_MESSAGE);
 		msgBuilder.setFrom(1000);
@@ -91,7 +85,15 @@ public class Test {
 		msgBuilder.setContent("Hello 1000, I am yourself!");
 		msgBuilder.setSendTime("2016-01-28");
 		MessageProbuf.Message message = msgBuilder.build();
-		builder.setMessages(0, message);
+		
+		Action.Builder actionBuilder = Action.newBuilder();
+		actionBuilder.setActionType(ActionType.SEND_MESSAGE);
+		actionBuilder.addMessages(message);
+		
+		if(ClientCache.client.getSocketChannel().isWritable()){
+			System.out.println("现在开始发送消息");
+			ClientCache.client.getSocketChannel().writeAndFlush(actionBuilder);	
+		}
 	}
 
 }
