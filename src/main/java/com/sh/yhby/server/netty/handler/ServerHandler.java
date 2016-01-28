@@ -10,6 +10,7 @@ import com.sh.yhby.protobuf.ActionProbuf;
 import com.sh.yhby.protobuf.ActionProbuf.Action;
 import com.sh.yhby.protobuf.ActionTypeProbuf;
 import com.sh.yhby.protobuf.ActionTypeProbuf.ActionType;
+import com.sh.yhby.protobuf.MessageProbuf;
 import com.sh.yhby.server.cache.CacheUtil;
 import com.sh.yhby.server.cache.CometCache;
 import com.sh.yhby.server.domain.CometContext;
@@ -67,7 +68,16 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		    	  UserChannel userChannel = CometCache.getConnect(userId);
 			      userChannel.refreshHeatbeat();// 更新心跳时间
 		    	  //发送消息
+			      MessageProbuf.Message message = action.getMessages(0);
+			      long from = message.getFrom();
+			      long to = message.getTo();
 			      
+			      action.newBuilderForType().setActionType(ActionType.RECEIVE_MESSAGE);
+			    
+			      UserChannel toUserChannel = CometCache.getConnect(to);
+			      if(toUserChannel.getChannel().isActive()){
+			    	  toUserChannel.getChannel().writeAndFlush(action);
+			      }
 			      
 		      } break;
 		}

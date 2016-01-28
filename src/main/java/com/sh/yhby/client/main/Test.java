@@ -1,6 +1,10 @@
 package com.sh.yhby.client.main;
 
 import com.sh.yhby.client.cache.ClientCache;
+import com.sh.yhby.protobuf.ActionProbuf.Action;
+import com.sh.yhby.protobuf.ActionTypeProbuf.ActionType;
+import com.sh.yhby.protobuf.MessageProbuf;
+import com.sh.yhby.protobuf.MsgTypeProbuf.MsgType;
 
 public class Test {
 
@@ -70,6 +74,21 @@ public class Test {
 				}	
 			}	
 		}).start();
+		
+		
+		
+		//发送消息
+		Action.Builder builder = Action.newBuilder();
+		builder.setActionType(ActionType.SEND_MESSAGE);
+		
+		MessageProbuf.Message.Builder msgBuilder = MessageProbuf.Message.newBuilder();
+		msgBuilder.setMsgType(MsgType.TEXT_MESSAGE);
+		msgBuilder.setFrom(1000);
+		msgBuilder.setTo(1000);
+		msgBuilder.setContent("Hello 1000, I am yourself!");
+		msgBuilder.setSendTime("2016-01-28");
+		MessageProbuf.Message message = msgBuilder.build();
+		builder.setMessages(0, message);
 	}
 
 }

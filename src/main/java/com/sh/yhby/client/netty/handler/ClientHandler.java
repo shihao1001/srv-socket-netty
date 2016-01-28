@@ -4,6 +4,7 @@ import com.sh.yhby.client.cache.ClientCache;
 import com.sh.yhby.client.srv.impl.ClientServiceImpl;
 import com.sh.yhby.protobuf.ActionProbuf;
 import com.sh.yhby.protobuf.ActionTypeProbuf.ActionType;
+import com.sh.yhby.protobuf.MessageProbuf;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -42,6 +43,14 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		    break;
 		    case RECEIVE_MESSAGE:{//服务器要求接受数据
 		    	//1.接收消息
+		    	MessageProbuf.Message message = action.getMessages(0);
+		    	int from = message.getFrom();
+		    	String time = message.getSendTime();
+		    	String content = message.getContent();
+		    	String sendTime = message.getSendTime();
+		    	System.out.println(from + "说：");
+		    	System.out.println(content + "		" + sendTime);
+		    	
 		    	//2.发送确认接受消息通知RECEIVED_MESSAGE_ACK
 		    }
 		    break;
