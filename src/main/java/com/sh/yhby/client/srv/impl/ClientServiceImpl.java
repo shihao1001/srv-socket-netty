@@ -22,11 +22,13 @@ public class ClientServiceImpl implements ClientServiceInter {
 	public void login() {
 		//检查连接是否建立
 		if(!clientChannel.isActive()){
-			NettyClient client = new NettyClient();//重建连接
+			//NettyClient client =
+			 new NettyClient();//重建连接
 		}
 		if(clientChannel != null && clientChannel.isActive()){
 			ActionProbuf.Action.Builder actionBuilder = ActionProbuf.Action.newBuilder();
 			actionBuilder.setActionType(ActionType.LOGIN);
+			actionBuilder.setToken(token);
 			Action loginAction = actionBuilder.build();
 			clientChannel.writeAndFlush(loginAction);
 		}

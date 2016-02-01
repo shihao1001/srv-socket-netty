@@ -45,16 +45,30 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		    	//1.接收消息
 		    	MessageProbuf.Message message = action.getMessages(0);
 		    	int from = message.getFrom();
-		    	String time = message.getSendTime();
 		    	String content = message.getContent();
 		    	String sendTime = message.getSendTime();
 		    	System.out.println(from + "说：");
 		    	System.out.println(content + "		" + sendTime);
-		    	
 		    	//2.发送确认接受消息通知RECEIVED_MESSAGE_ACK
 		    }
 		    break;
 		    case SENDED_MESSAGE_ACK:{//服务器 发送消息 消息投递成功 通知消息
+		    	
+		    }
+		    break;   
+		    case RESPONSE:{
+		    	
+		    } 
+		    break; 
+		    case SEND_MESSAGE:{
+		    	
+		    }
+		    break;
+		    case RECEIVED_MESSAGE_ACK:{
+		    	
+		    }
+		    break;
+		    case PING:{
 		    	
 		    }
 		    break;

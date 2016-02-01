@@ -1,7 +1,5 @@
 package com.sh.yhby.client.watcher.impl;
 
-import java.util.concurrent.Executors;
-
 import com.sh.yhby.client.cache.ClientCache;
 import com.sh.yhby.client.main.NettyClient;
 import com.sh.yhby.client.watcher.inter.OffLineWatcher;

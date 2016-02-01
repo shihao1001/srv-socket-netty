@@ -1,15 +1,10 @@
 package com.sh.yhby.server.cache;
 
-import io.netty.channel.Channel;
+
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
-
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.sh.yhby.server.domain.UserChannel;
