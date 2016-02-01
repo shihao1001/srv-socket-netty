@@ -68,6 +68,7 @@ public class NettyClient {
 			Future<?>  future = group.shutdownGracefully().sync();
 			if(future.isSuccess()){
 				isShutdown = true;
+				this.socketChannel = null;
 			}
 	        System.out.println("客户端优雅的释放了线程资源...");
 		}

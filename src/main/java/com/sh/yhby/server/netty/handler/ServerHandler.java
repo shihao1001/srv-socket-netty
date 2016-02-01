@@ -40,13 +40,15 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
 		String userToken = action.getToken();
 		Long userId = CacheUtil.getUserId(userToken);
+		
+		UserChannel userChannel = null;
 
 		if (action.getActionType().equals(ActionTypeProbuf.ActionType.LOGIN)) {// 长连接登录
 			// 验证用户，当前直连，没有验证
 			logger.info(String.format("用户id为：%d的用户通过长连接登录！", userId));
 			CometCache.addConnect(new UserChannel(userId, channel));
 		} else {
-			UserChannel userChannel = CometCache.getConnect(userId);
+		    userChannel = CometCache.getConnect(userId);
 			if (userChannel == null) {
 				// 说明未登录，或者链接断了，向客户端发起登录请求，让客户端重新登录
 				logger.info(String.format("用户id为：%d 的用户需要重新登录！", userId));
@@ -61,11 +63,9 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		switch (action.getActionType()) {
 		      case PING: {
 		    	  //心跳
-			      UserChannel userChannel = CometCache.getConnect(userId);
 			      userChannel.refreshHeatbeat();// 更新心跳时间
 		      } break;
 		      case SEND_MESSAGE:{
-		    	  UserChannel userChannel = CometCache.getConnect(userId);
 			      userChannel.refreshHeatbeat();// 更新心跳时间
 		    	  //发送消息
 			      System.out.println("开始发送消息");
