@@ -75,15 +75,17 @@ public class NettyClient {
 	
 	public void shutdown() throws InterruptedException{
 		//同步等待线程释放成功
-		if(!group.isShutdown()){
-			Future<?>  future = group.shutdownGracefully().sync();
-			if(future.isSuccess()){
+	//	if(!group.isShutdown()){
+		//	Future<?>  future = 
+		System.out.println("客户端优雅的释放了线程资源...");
+		group.shutdownGracefully();
+		//	if(future.isSuccess()){
 				isShutdown = true;
 				this.socketChannel = null;
 				offLineWatcher.reconnect();
-			}
-	        System.out.println("客户端优雅的释放了线程资源...");
-		}
+		//	}
+	        
+		//}
 		
 	}
 	
