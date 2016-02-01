@@ -2,6 +2,7 @@ package com.sh.yhby.client.main;
 
 import com.sh.yhby.client.cache.ClientCache;
 import com.sh.yhby.client.netty.handler.ClientHandler;
+import com.sh.yhby.client.watcher.inter.OffLineWatcher;
 import com.sh.yhby.protobuf.ActionProbuf;
 import com.sh.yhby.protobuf.ActionTypeProbuf.ActionType;
 
@@ -28,6 +29,8 @@ public class NettyClient {
 	private EventLoopGroup group;
 	public volatile boolean isShutdown = true;
 	
+	private OffLineWatcher offLineWatcher;
+	
 	public String getIpAddr() {
 		return ipAddr;
 	}
@@ -52,6 +55,14 @@ public class NettyClient {
 		this.socketChannel = socketChannel;
 	}
 	
+	public OffLineWatcher getOffLineWatcher() {
+		return offLineWatcher;
+	}
+
+	public void setOffLineWatcher(OffLineWatcher offLineWatcher) {
+		this.offLineWatcher = offLineWatcher;
+	}
+	
 	public NettyClient() {
 		connect();
 	}
@@ -69,6 +80,7 @@ public class NettyClient {
 			if(future.isSuccess()){
 				isShutdown = true;
 				this.socketChannel = null;
+				offLineWatcher.reconnect();
 			}
 	        System.out.println("客户端优雅的释放了线程资源...");
 		}
@@ -138,5 +150,4 @@ public class NettyClient {
 	    	System.out.println("连接出错");
 	    }
 	}
-
 }

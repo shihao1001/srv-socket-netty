@@ -1,6 +1,7 @@
 package com.sh.yhby.client.main;
 
 import com.sh.yhby.client.cache.ClientCache;
+import com.sh.yhby.client.watcher.impl.DefaultOffLineWatcher;
 import com.sh.yhby.protobuf.ActionProbuf.Action;
 import com.sh.yhby.protobuf.ActionTypeProbuf.ActionType;
 import com.sh.yhby.protobuf.MessageProbuf;
@@ -9,8 +10,7 @@ import com.sh.yhby.protobuf.MsgTypeProbuf.MsgType;
 public class Test {
 
 	public static void main(String[] args) throws InterruptedException {
-		NettyClient client = new NettyClient("127.0.0.1", 9000);
-		System.out.println("客户端开始登录");
+		
 		/*if (client.getSocketChannel() != null) {
 			ActionProbuf.Action.Builder actionBuilder = ActionProbuf.Action.newBuilder();
 			actionBuilder.setActionType(ActionType.LOGIN);
@@ -20,11 +20,18 @@ public class Test {
 				System.out.println("发送成功");
 			}
 		}	*/
+		System.out.println("客户端开始登录");
+		boolean isLoginSuccess = false;
+		while(!isLoginSuccess){
+			NettyClient client = new NettyClient("127.0.0.1", 9000);	
+			client.setOffLineWatcher(new DefaultOffLineWatcher());
+			isLoginSuccess = client.login();
+		}
+		//注册监听器
 		
-		boolean isLoginSuccess = client.login();
 		
 		//循环监听是否断线，断线重连	
-		new Thread(new Runnable(){
+		/*new Thread(new Runnable(){
 			public void run() {
 				int reConnectCount = 0;
 				while(true){
@@ -73,7 +80,7 @@ public class Test {
 					
 				}	
 			}	
-		}).start();
+		}).start();*/
 
 		Thread.sleep(5*1000);
 		

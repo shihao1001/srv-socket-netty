@@ -13,6 +13,7 @@ public class DefaultOffLineWatcher implements OffLineWatcher {
 		while(true){
 			if(ClientCache.client == null){
 				NettyClient client = new NettyClient("127.0.0.1", 9000);
+				client.setOffLineWatcher(new DefaultOffLineWatcher());
 				boolean isSussess = client.login();
 				if(isSussess){
 					break;
@@ -20,11 +21,12 @@ public class DefaultOffLineWatcher implements OffLineWatcher {
 			}else{
 				if(ClientCache.client.isShutdown){
 					NettyClient client = new NettyClient("127.0.0.1", 9000);
+					client.setOffLineWatcher(new DefaultOffLineWatcher());
 					client.login();
 					if(client.getSocketChannel() != null){
-						ClientCache.client = null;
 						ClientCache.client = client;
 						reConnectCount = 0;
+						break;
 					}else{
 						reConnectCount++;
 						if(reConnectCount <=5){
