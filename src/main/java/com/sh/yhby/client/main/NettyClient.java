@@ -19,6 +19,7 @@ import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.concurrent.Future;
 
 public class NettyClient {
 	private String ipAddr = "127.0.0.1";
@@ -61,10 +62,16 @@ public class NettyClient {
 		connect();
 	}
 	
-	public void shutdown(){
-		group.shutdownGracefully();
-		isShutdown = true;
-        System.out.println("客户端优雅的释放了线程资源...");
+	public void shutdown() throws InterruptedException{
+		//同步等待线程释放成功
+		if(!group.isShutdown()){
+			Future<?>  future = group.shutdownGracefully().sync();
+			if(future.isSuccess()){
+				isShutdown = true;
+			}
+	        System.out.println("客户端优雅的释放了线程资源...");
+		}
+		
 	}
 	
 	public boolean login(){
@@ -84,8 +91,11 @@ public class NettyClient {
 				e.printStackTrace();
 			}
 			return false;
+		}else{
+			System.out.println("客户端socket为null,请重新初始化连接！");
+			return false;
 		}	
-		return false;
+		
 	}
 	
 	public void connect(){
@@ -121,6 +131,9 @@ public class NettyClient {
 	        }
 	    }catch(Exception e){
 	    	e.printStackTrace();
+	    	if(!group.isShutdown()){
+	    		group.shutdownGracefully();
+	    	}
 	    	System.out.println("连接出错");
 	    }
 	}

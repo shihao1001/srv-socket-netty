@@ -34,8 +34,7 @@ public class ClientServiceImpl implements ClientServiceInter {
 	
 	public void sendMessage(Action action){
 		//SEND_MESSAGE  
-		
-		
+		clientChannel.writeAndFlush(action);		
 	}
 
 	
