@@ -1,5 +1,7 @@
 package com.sh.yhby.client.srv.impl;
 
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.socket.SocketChannel;
 
 import com.sh.yhby.client.cache.ClientCache;
@@ -34,9 +36,9 @@ public class ClientServiceImpl implements ClientServiceInter {
 		}
 	}
 	
-	public void sendMessage(Action action){
+	public ChannelFuture sendMessage(Action action){
 		//SEND_MESSAGE  
-		clientChannel.writeAndFlush(action);		
+		return clientChannel.writeAndFlush(action);		
 	}
 
 	

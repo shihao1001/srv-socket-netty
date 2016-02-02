@@ -82,7 +82,7 @@ public class NettyClient {
 		//	if(future.isSuccess()){
 				isShutdown = true;
 				this.socketChannel = null;
-				offLineWatcher.reconnect();
+				//offLineWatcher.reconnect();
 		//	}
 	        
 		//}

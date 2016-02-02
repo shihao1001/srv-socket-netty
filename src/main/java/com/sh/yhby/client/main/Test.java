@@ -1,5 +1,7 @@
 package com.sh.yhby.client.main;
 
+import io.netty.channel.socket.SocketChannel;
+
 import com.sh.yhby.client.cache.ClientCache;
 import com.sh.yhby.client.watcher.impl.DefaultOffLineWatcher;
 import com.sh.yhby.protobuf.ActionProbuf.Action;
@@ -24,14 +26,14 @@ public class Test {
 		boolean isLoginSuccess = false;
 		while(!isLoginSuccess){
 			NettyClient client = new NettyClient("127.0.0.1", 9000);	
-			client.setOffLineWatcher(new DefaultOffLineWatcher());
+			//client.setOffLineWatcher(new DefaultOffLineWatcher());
 			isLoginSuccess = client.login();
 		}
 		//注册监听器
 		
 		
 		//循环监听是否断线，断线重连	
-		/*new Thread(new Runnable(){
+		new Thread(new Runnable(){
 			public void run() {
 				int reConnectCount = 0;
 				while(true){
@@ -39,7 +41,8 @@ public class Test {
 						NettyClient client = new NettyClient("127.0.0.1", 9000);
 						client.login();
 					}else{
-						if(ClientCache.client.isShutdown){
+						SocketChannel socket = ClientCache.client.getSocketChannel();
+						if(!socket.isActive() || socket.isInputShutdown() || socket.isOutputShutdown()){
 							NettyClient client = new NettyClient("127.0.0.1", 9000);
 							client.login();
 							if(client.getSocketChannel() != null){
@@ -80,7 +83,7 @@ public class Test {
 					
 				}	
 			}	
-		}).start();*/
+		}).start();
 
 		Thread.sleep(5*1000);
 		

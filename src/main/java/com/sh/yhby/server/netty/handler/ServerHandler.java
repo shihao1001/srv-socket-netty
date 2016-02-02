@@ -64,7 +64,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		}
 		switch (action.getActionType()) {
 		case LOGIN:{
-			
+			//不会出现
 		}
 		break;		
 		case PING: {
@@ -74,6 +74,12 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 			break;
 		case SEND_MESSAGE: {
 			userChannel.refreshHeatbeat();// 更新心跳时间
+			//1.保存消息
+			
+			
+			//2.转发消息
+			
+			
 			// 发送消息
 			System.out.println("开始发送消息");
 			MessageProbuf.Message message = action.getMessages(0);
@@ -96,19 +102,21 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		}
 			break;
 		case SENDED_MESSAGE_ACK: {// 服务器 发送消息 消息投递成功 通知消息
-
+           //不会出现
 		}
 			break;
 		case RESPONSE: {
-
+           //待定
 		}
 			break;
 		case RECEIVED_MESSAGE_ACK: {
-
+               //客户端接收到消息，服务端对消息状态进行变更为已接收
+			
 		}
 			break;
         case RECEIVE_MESSAGE:{
-			
+			  //待定
+        	
 		}
 		break;
 		}
